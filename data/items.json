@@ -1,0 +1,17 @@
+[
+    {
+        "name": "Pomme",
+        "aisle": "Fruits",
+        "location": "A1"
+    },
+    {
+        "name": "Lait",
+        "aisle": "Produits Laitiers",
+        "location": "B2"
+    },
+    {
+        "name": "Pain",
+        "aisle": "Boulangerie",
+        "location": "C3"
+    }
+]
