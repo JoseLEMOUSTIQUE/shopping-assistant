@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Assistant</title>
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+    <header>
+        <h1>Shopping Assistant</h1>
+    </header>
+    <main>
+        <section id="shopping-list">
+            <h2>Votre Liste de Courses</h2>
+            <form id="add-item-form">
+                <input type="text" id="item-name" placeholder="Nom de l'article" required>
+                <input type="text" id="item-aisle" placeholder="Rayon" required>
+                <input type="text" id="item-location" placeholder="Emplacement (ex: A1)" required>
+                <button type="submit">Ajouter</button>
+            </form>
+            <ul id="list">
+                <!-- Les éléments de la liste de courses seront injectés ici -->
+            </ul>
+            <button id="clear-list">Vider la Liste</button>
+        </section>
+        <section id="map">
+            <h2>Carte du Magasin</h2>
+            <div id="map-container">
+                <img src="assets/map.png" alt="Carte du magasin" id="store-map">
+                <!-- Les pointeurs seront ajoutés ici dynamiquement -->
+            </div>
+        </section>
+    </main>
+    <script src="scripts/app.js"></script>
+</body>
+</html>
