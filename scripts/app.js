@@ -1,32 +1,50 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // Initialise la liste de courses
+    let aisles = [];
     let shoppingList = [];
 
-    // Chargement initial des données
-    fetch('data/items.json')
+    // Charger les rayons depuis la base de données
+    fetch('data/products.json')
         .then(response => response.json())
         .then(data => {
-            shoppingList = data;
-            updateShoppingList();
-            updateMapPointers();
+            aisles = data;
         });
 
-    // Formulaire pour ajouter un article
-    const addItemForm = document.getElementById("add-item-form");
-    addItemForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const name = document.getElementById("item-name").value;
-        const aisle = document.getElementById("item-aisle").value;
-        const location = document.getElementById("item-location").value;
+    // Gestion de la barre de recherche
+    const searchBar = document.getElementById("search-bar");
+    const suggestionsList = document.getElementById("suggestions");
 
-        // Ajoute l'article à la liste de courses
-        shoppingList.push({ name, aisle, location });
+    searchBar.addEventListener("input", (e) => {
+        const query = e.target.value.toLowerCase();
+        suggestionsList.innerHTML = "";
+
+        if (query.length > 0) {
+            aisles.forEach(aisle => {
+                aisle.themes.forEach(theme => {
+                    const suggestions = theme.products.filter(product => 
+                        product.name.toLowerCase().includes(query)
+                    );
+
+                    suggestions.forEach(product => {
+                        const li = document.createElement("li");
+                        li.textContent = `${product.name} - ${theme.theme} (${aisle.aisle})`;
+                        li.addEventListener("click", () => {
+                            addProductToShoppingList(product, aisle.aisle, theme.theme);
+                            searchBar.value = "";
+                            suggestionsList.innerHTML = "";
+                        });
+                        suggestionsList.appendChild(li);
+                    });
+                });
+            });
+        }
+    });
+
+    // Ajouter un produit à la liste de courses
+    function addProductToShoppingList(product, aisle, theme) {
+        shoppingList.push({ ...product, aisle, theme });
         updateShoppingList();
         updateMapPointers();
-
-        // Réinitialiser le formulaire
-        addItemForm.reset();
-    });
+    }
 
     // Met à jour la liste de courses affichée
     function updateShoppingList() {
@@ -34,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
         list.innerHTML = "";
         shoppingList.forEach((item, index) => {
             let listItem = document.createElement("li");
-            listItem.textContent = `${item.name} - Rayon: ${item.aisle} - Emplacement: ${item.location}`;
+            listItem.textContent = `${item.name} - ${item.theme} - Rayon: ${item.aisle} - Emplacement: ${item.location}`;
 
             // Bouton de suppression pour chaque article
             let removeButton = document.createElement("button");
@@ -53,32 +71,36 @@ document.addEventListener("DOMContentLoaded", () => {
     // Met à jour les pointeurs sur la carte
     function updateMapPointers() {
         const mapContainer = document.getElementById("map-container");
-        // Retire les anciens pointeurs
         document.querySelectorAll('.pointer').forEach(p => p.remove());
 
         shoppingList.forEach(item => {
             let pointer = document.createElement("div");
             pointer.classList.add("pointer");
 
-            // Exemple simple : placer le pointeur à des positions fixes en fonction du location
-            // Idéalement, vous ajusteriez ces valeurs en fonction de la taille de l'image de la carte
-            let position = getPositionFromLocation(item.location);
-
+            let position = getPositionFromLocation(item.aisle, item.location);
             pointer.style.left = `${position.x}%`;
             pointer.style.top = `${position.y}%`;
             mapContainer.appendChild(pointer);
         });
     }
 
-    // Cette fonction devrait être ajustée pour mapper correctement les emplacements des produits sur la carte
-    function getPositionFromLocation(location) {
-        // Simuler des positions pour quelques emplacements
+    // Simulez des positions pour les emplacements
+    function getPositionFromLocation(aisle, location) {
         const positions = {
-            "A1": { x: 20, y: 30 },
-            "B2": { x: 50, y: 50 },
-            "C3": { x: 80, y: 70 }
+            "Bio1": { x: 10, y: 20 },
+            "Bio2": { x: 15, y: 25 },
+            "Bio3": { x: 20, y: 30 },
+            "Bio4": { x: 25, y: 35 },
+            "Bio5": { x: 30, y: 40 },
+            "Bio6": { x: 35, y: 45 },
+            "Bio7": { x: 40, y: 50 },
+            "Bio8": { x: 45, y: 55 },
+            "Bio9": { x: 50, y: 60 },
+            "Bio10": { x: 55, y: 65 },
+            "Bio11": { x: 60, y: 70 },
+            "Bio12": { x: 65, y: 75 }
         };
-        return positions[location] || { x: 50, y: 50 };
+        return positions[aisle + location] || { x: 50, y: 50 };
     }
 
     // Bouton pour vider la liste
